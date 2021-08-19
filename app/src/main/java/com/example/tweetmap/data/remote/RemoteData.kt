@@ -1,9 +1,10 @@
 package com.example.tweetmap.data.remote
 
+import com.example.tweetmap.CLIENT_CREDENTIALS
 import com.example.tweetmap.data.Error.NETWORK_ERROR
 import com.example.tweetmap.data.Error.NO_INTERNET_CONNECTION
 import com.example.tweetmap.data.Resource
-import com.example.tweetmap.data.models.TweetResponseModel
+import com.example.tweetmap.data.models.*
 import com.example.tweetmap.data.remote.services.TweetService
 import com.example.tweetmap.utils.NetworkConnectivity
 import retrofit2.Response
@@ -26,6 +27,43 @@ constructor(
             }
         }
     }
+
+    override suspend fun getToken(): Resource<Token> {
+        val tweetService = serviceGenerator.createService(TweetService::class.java)
+        return when (val response = processCall { tweetService.getToken(CLIENT_CREDENTIALS) }) {
+            is Token -> {
+                Resource.Success(data = response )
+            }
+            else -> {
+                Resource.DataError(errorCode = response as Int)
+            }
+        }
+    }
+
+    override suspend fun postRules(addRuleModel:AddRuleModel): Resource<RuleResponseModel> {
+        val tweetService = serviceGenerator.createService(TweetService::class.java)
+        return when (val response = processCall { tweetService.postRule(addRuleModel) }) {
+            is RuleResponseModel -> {
+                Resource.Success(data = response )
+            }
+            else -> {
+                Resource.DataError(errorCode = response as Int)
+            }
+        }
+    }
+
+    override suspend fun streamTweets(): Resource<StreamResponseModel> {
+        val tweetService = serviceGenerator.createService(TweetService::class.java)
+        return when (val response = processCall { tweetService.streamTweets() }) {
+            is StreamResponseModel -> {
+                Resource.Success(data = response )
+            }
+            else -> {
+                Resource.DataError(errorCode = response as Int)
+            }
+        }
+    }
+
 
     private suspend fun processCall(responseCall: suspend () -> Response<*>): Any? {
         if (!networkConnectivity.isConnected()) {
