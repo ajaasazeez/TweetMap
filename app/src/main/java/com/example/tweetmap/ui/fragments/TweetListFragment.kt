@@ -9,15 +9,23 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.example.tweetmap.R
 import com.example.tweetmap.data.Resource
 import com.example.tweetmap.databinding.FragmentTweetListBinding
 import com.example.tweetmap.utils.PrefsHelper
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TweetListFragment : Fragment() {
+class TweetListFragment : Fragment(), OnMapReadyCallback {
 
+    private lateinit var mMap: GoogleMap
     private lateinit var binding: FragmentTweetListBinding
     private val tweetListViewModel: TweetListViewModel by viewModels()
     override fun onCreateView(
@@ -31,8 +39,9 @@ class TweetListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (PrefsHelper.read(PrefsHelper.TOKEN, "").isNullOrBlank())
-            tweetListViewModel.getToken()
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+        tweetListViewModel.getToken()
         tweetListViewModel.streamTweets()
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
@@ -63,5 +72,17 @@ class TweetListFragment : Fragment() {
                 }
             }
         })
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        // Add a marker in Sydney and move the camera
+        val sydney = LatLng(-34.0, 151.0)
+        mMap.addMarker(
+            MarkerOptions()
+            .position(sydney)
+            .title("Marker in Sydney"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 }

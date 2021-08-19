@@ -16,6 +16,7 @@ interface TweetService {
     @POST("2/tweets/search/stream/rules")
     suspend fun postRule(@Body ruleModel: AddRuleModel): Response<RuleResponseModel>
 
+    @Streaming
     @GET("2/tweets/search/stream")
     suspend fun streamTweets(): Response<StreamResponseModel>
 }
