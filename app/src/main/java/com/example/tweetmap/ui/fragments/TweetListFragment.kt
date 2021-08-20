@@ -40,7 +40,8 @@ class TweetListFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
+        binding.map.onCreate(savedInstanceState)
+        binding.map.onResume()
         tweetListViewModel.getToken()
         tweetListViewModel.streamTweets()
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,

@@ -13,6 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TweetMap">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyD4CWAXKoqFFMcdOWP0m8j0SBJUaFhZSo0" />
         <activity
             android:name=".ui.MainActivity"
             android:exported="true">
