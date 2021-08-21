@@ -25,21 +25,23 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.gson.Gson
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class TweetListFragment : Fragment() {
+    private lateinit var currentLocation: LatLng
     private lateinit var googleMap: GoogleMap
+    private val RADIUS = 50000
     private lateinit var binding: FragmentTweetListBinding
     private val tweetListViewModel: TweetListViewModel by viewModels()
     private lateinit var locationManager: LocationManager
+    private var markerList: MutableList<Marker> = ArrayList()
+    private lateinit var searchKey:String
     private val locationListener = LocationListener {
         moveMapToCurrentLocation(it)
-        /*googleMap.addMarker(
-                MarkerOptions().position(currentLocation).title("Marker Title").snippet("Marker Description")
-            )*/
     }
 
     @SuppressLint("MissingPermission")
@@ -74,6 +76,7 @@ class TweetListFragment : Fragment() {
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(keyWord: String?): Boolean {
                 keyWord?.let {
+                    searchKey = keyWord
                     tweetListViewModel.postRules(it)
                 }
                 return false
@@ -86,6 +89,33 @@ class TweetListFragment : Fragment() {
         })
         setObservers()
 
+    }
+
+    private fun setObservers() {
+        tweetListViewModel.streamResponseLiveData.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is Resource.Loading -> Log.e("Loading", "true") /*showLoadingView()*/
+                is Resource.Success -> {
+                    val tweetModel = it.data
+                    tweetModel?.let {
+                        //set fake location since twitter api doesn't give location
+                        tweetModel.data.geo = tweetListViewModel.getRandomLocation(
+                            LatLng(
+                                currentLocation.latitude,
+                                currentLocation.longitude
+                            ), RADIUS
+                        )!!
+                        googleMap.addMarker(MarkerOptions().position(tweetModel.data.geo)
+                                    .title(tweetModel.includes.users[0].username)
+                                    .snippet(tweetModel.data.text)
+                            ) }
+
+                }
+                is Resource.DataError -> {
+
+                }
+            }
+        })
     }
 
     private fun setUpGoogleMap() {
@@ -116,21 +146,8 @@ class TweetListFragment : Fragment() {
         }
     }
 
-    private fun setObservers() {
-        tweetListViewModel.streamResponseLiveData.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Resource.Loading -> Log.e("Loading", "true") /*showLoadingView()*/
-                is Resource.Success -> Log.e("Success", Gson().toJson(it.data))
-                is Resource.DataError -> {
-                    /* showDataView(false)
-                     status.errorCode?.let { recipesListViewModel.showToastMessage(it) }*/
-                }
-            }
-        })
-    }
-
     private fun moveMapToCurrentLocation(location: Location) {
-        val currentLocation = LatLng(location.latitude, location.longitude)
+        currentLocation = LatLng(location.latitude, location.longitude)
         val cameraPosition = CameraPosition.Builder().target(currentLocation).zoom(12f).build()
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
