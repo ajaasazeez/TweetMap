@@ -13,11 +13,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.example.tweetmap.data.Resource
 import com.example.tweetmap.databinding.FragmentTweetListBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -39,7 +39,7 @@ class TweetListFragment : Fragment() {
     private val tweetListViewModel: TweetListViewModel by viewModels()
     private lateinit var locationManager: LocationManager
     private var markerList: MutableList<Marker> = ArrayList()
-    private lateinit var searchKey:String
+    private lateinit var searchKey: String
     private val locationListener = LocationListener {
         moveMapToCurrentLocation(it)
     }
@@ -76,6 +76,7 @@ class TweetListFragment : Fragment() {
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(keyWord: String?): Boolean {
                 keyWord?.let {
+                    googleMap.clear()
                     searchKey = keyWord
                     tweetListViewModel.postRules(it)
                 }
@@ -92,27 +93,48 @@ class TweetListFragment : Fragment() {
     }
 
     private fun setObservers() {
-        tweetListViewModel.streamResponseLiveData.observe(viewLifecycleOwner, Observer {
+        tweetListViewModel.streamResponseLiveData.observe(viewLifecycleOwner, { it ->
             when (it) {
                 is Resource.Loading -> Log.e("Loading", "true") /*showLoadingView()*/
                 is Resource.Success -> {
                     val tweetModel = it.data
                     tweetModel?.let {
                         //set fake location since twitter api doesn't give location
-                        tweetModel.data.geo = tweetListViewModel.getRandomLocation(
-                            LatLng(
-                                currentLocation.latitude,
-                                currentLocation.longitude
-                            ), RADIUS
-                        )!!
-                        googleMap.addMarker(MarkerOptions().position(tweetModel.data.geo)
-                                    .title(tweetModel.includes.users[0].username)
-                                    .snippet(tweetModel.data.text)
-                            ) }
+                        tweetModel.data?.let {
+                            it.geo = tweetListViewModel.getRandomLocation(
+                                LatLng(
+                                    currentLocation.latitude,
+                                    currentLocation.longitude
+                                ), RADIUS
+                            )!!
+                            if (tweetModel.matching_rules[0].tag == searchKey)
+                                googleMap.addMarker(
+                                    MarkerOptions().position(it.geo)
+                                        .title(tweetModel.includes.users[0].username)
+                                        .snippet(tweetModel.data.text)
+                                )
+                        }
+                    }
+
 
                 }
                 is Resource.DataError -> {
 
+                }
+            }
+        })
+
+        tweetListViewModel.ruleResponseLiveData.observe(viewLifecycleOwner, {
+            when (it) {
+                is Resource.Loading -> Log.e("Loading", "true") /*showLoadingView()*/
+                is Resource.Success -> {
+                }
+                is Resource.DataError -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Twitter restricted account. Only hi, hey or day is allowed",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         })
