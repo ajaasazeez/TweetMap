@@ -13,6 +13,8 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import okio.Buffer
+import java.nio.charset.Charset
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,10 +52,20 @@ constructor(private val dataRepository: DataRepositorySource) : ViewModel() {
         }
     }
 
-    fun streamTweets(){
+    fun streamTweets() {
         viewModelScope.launch {
             dataRepository.streamTweets().collect {
-                streamResponseLiveDataPrivate.value = it
+                Log.e("viewModelStream",it.data.toString())
+//                streamResponseLiveDataPrivate.value = it
+                /*  val source = it.data?.source()
+                val buffer = Buffer()
+                while(!source!!.exhausted()){
+                    it.data.source().read(buffer, 8192)
+                    val data = buffer.readString(Charset.defaultCharset())
+                    Log.e("StreamSuccess",data)
+                }
+            }*/
+
             }
         }
     }
