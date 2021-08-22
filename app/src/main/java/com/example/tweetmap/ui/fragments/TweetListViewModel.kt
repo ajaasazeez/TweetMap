@@ -55,7 +55,7 @@ constructor(private val dataRepository: DataRepositorySource) : ViewModel() {
         }
     }
 
-    fun streamTweets() {
+    private fun streamTweets() {
         viewModelScope.launch {
             dataRepository.streamTweets().collect {
                 streamResponseLiveDataPrivate.value = it

@@ -75,6 +75,13 @@ class TweetListFragment : Fragment() {
             activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         setUpGoogleMap()
         tweetListViewModel.getToken()
+        setListeners()
+        setObservers()
+        job.start()
+
+    }
+
+    private fun setListeners() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(keyWord: String?): Boolean {
@@ -89,14 +96,10 @@ class TweetListFragment : Fragment() {
             override fun onQueryTextChange(p0: String?): Boolean {
                 return false
             }
-
         })
         binding.btnSet.setOnClickListener {
             markerLifeSpan = binding.etTimer.text.toString().toInt()
         }
-        setObservers()
-        job.start()
-
     }
 
     private fun setObservers() {
