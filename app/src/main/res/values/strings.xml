@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TweetMap</string>
+    <string name="marker_lifespan">Marker lifespan (in seconds)</string>
+    <string name="set">SET</string>
 </resources>

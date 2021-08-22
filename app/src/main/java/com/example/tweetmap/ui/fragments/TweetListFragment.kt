@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
 
 
 @AndroidEntryPoint
@@ -40,6 +41,8 @@ class TweetListFragment : Fragment() {
     private lateinit var locationManager: LocationManager
     private var markerList: MutableList<Marker> = ArrayList()
     private lateinit var searchKey: String
+    private val job = startRepeatingJob()
+    private var markerLifeSpan = 30
     private val locationListener = LocationListener {
         moveMapToCurrentLocation(it)
     }
@@ -88,14 +91,18 @@ class TweetListFragment : Fragment() {
             }
 
         })
+        binding.btnSet.setOnClickListener {
+            markerLifeSpan = binding.etTimer.text.toString().toInt()
+        }
         setObservers()
+        job.start()
 
     }
 
     private fun setObservers() {
         tweetListViewModel.streamResponseLiveData.observe(viewLifecycleOwner, { it ->
             when (it) {
-                is Resource.Loading -> Log.e("Loading", "true") /*showLoadingView()*/
+                is Resource.Loading -> Log.v("Loading", "true") /*showLoadingView()*/
                 is Resource.Success -> {
                     val tweetModel = it.data
                     tweetModel?.let {
@@ -107,12 +114,17 @@ class TweetListFragment : Fragment() {
                                     currentLocation.longitude
                                 ), RADIUS
                             )!!
-                            if (tweetModel.matching_rules[0].tag == searchKey)
-                                googleMap.addMarker(
+                            if (tweetModel.matching_rules[0].tag == searchKey) {
+                                val marker = googleMap.addMarker(
                                     MarkerOptions().position(it.geo)
                                         .title(tweetModel.includes.users[0].username)
                                         .snippet(tweetModel.data.text)
                                 )
+                                marker?.let {
+                                    it.tag = System.currentTimeMillis() / 1000
+                                    markerList.add(it)
+                                }
+                            }
                         }
                     }
 
@@ -126,7 +138,7 @@ class TweetListFragment : Fragment() {
 
         tweetListViewModel.ruleResponseLiveData.observe(viewLifecycleOwner, {
             when (it) {
-                is Resource.Loading -> Log.e("Loading", "true") /*showLoadingView()*/
+                is Resource.Loading -> Log.v("Loading", "true") /*showLoadingView()*/
                 is Resource.Success -> {
                 }
                 is Resource.DataError -> {
@@ -172,6 +184,34 @@ class TweetListFragment : Fragment() {
         currentLocation = LatLng(location.latitude, location.longitude)
         val cameraPosition = CameraPosition.Builder().target(currentLocation).zoom(12f).build()
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
+    private fun startRepeatingJob(): Job {
+        return CoroutineScope(Dispatchers.Default).launch {
+            while (isActive) {
+                if (markerList.isNotEmpty()) {
+                    markerList.forEach { marker ->
+                        val currentTimeStamp = System.currentTimeMillis() / 1000
+                        activity?.runOnUiThread {
+                            marker.tag?.let {
+                                if (currentTimeStamp.minus(
+                                        it.toString().toLong()
+                                    ) > markerLifeSpan
+                                ) {
+                                    marker.remove()
+                                }
+                            }
+                        }
+                    }
+                }
+                delay(5000)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
 

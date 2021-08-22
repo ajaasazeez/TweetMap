@@ -10,10 +10,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:queryHint="Search hi, hey or day. Restricted API"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:queryHint="Search hi, hey or day. Restricted API" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/marker_lifespan"
+        app:layout_constraintBottom_toBottomOf="@id/etTimer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/etTimer" />
+
+    <EditText
+        android:id="@+id/etTimer"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="30"
+        android:inputType="number"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/btnSet"
+        app:layout_constraintRight_toLeftOf="@id/btnSet"
+        app:layout_constraintTop_toTopOf="@id/btnSet" />
+
+    <Button
+        android:id="@+id/btnSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/set"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchView" />
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
@@ -21,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView"
+        app:layout_constraintTop_toBottomOf="@+id/btnSet"
         tools:context=".MapsActivity" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

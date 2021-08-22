@@ -60,7 +60,6 @@ class DataRepository @Inject constructor(
             while (!source!!.exhausted()) {
                 response.body?.source()?.read(buffer, 8192)
                 val data = buffer.readString(Charset.defaultCharset())
-                Log.e("StreamSuccess", data)
                 try {
                     val tweetResponseModel: TweetResponseModel = Gson().fromJson(data, TweetResponseModel::class.java)
                     emit(Resource.Success(tweetResponseModel ))
