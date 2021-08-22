@@ -16,12 +16,11 @@ import javax.inject.Inject
 
 class RemoteData @Inject
 constructor(
-    private val serviceGenerator: ServiceGenerator,
+    private val api: TweetService,
     private val networkConnectivity: NetworkConnectivity
 ) : RemoteDataSource {
     override suspend fun getTweets(): Resource<TweetResponseModel> {
-        val tweetService = serviceGenerator.createService(TweetService::class.java)
-        return when (val response = processCall(tweetService::getTweets)) {
+        return when (val response = processCall(api::getTweets)) {
             is List<*> -> {
                 Resource.Success(data = response as TweetResponseModel)
             }
@@ -32,8 +31,7 @@ constructor(
     }
 
     override suspend fun getToken(): Resource<Token> {
-        val tweetService = serviceGenerator.createService(TweetService::class.java)
-        return when (val response = processCall { tweetService.getToken(CLIENT_CREDENTIALS) }) {
+        return when (val response = processCall { api.getToken(CLIENT_CREDENTIALS) }) {
             is Token -> {
                 Resource.Success(data = response)
             }
@@ -44,8 +42,7 @@ constructor(
     }
 
     override suspend fun postRules(addRuleModel: AddRuleModel): Resource<RuleResponseModel> {
-        val tweetService = serviceGenerator.createService(TweetService::class.java)
-        return when (val response = processCall { tweetService.postRule(addRuleModel) }) {
+        return when (val response = processCall { api.postRule(addRuleModel) }) {
             is RuleResponseModel -> {
                 Resource.Success(data = response)
             }
