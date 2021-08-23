@@ -11,5 +11,4 @@
   <li>Navigation Components</li>
 	<li>ViewModels</li>
 	<li>Repository pattern</li>
-<br>
-  <p><b>The twitter dev account have restricted access. Temporarily only keywords hi, hey or day is searchable. <b></p>
+
