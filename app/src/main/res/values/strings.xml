@@ -2,4 +2,8 @@
     <string name="app_name">TweetMap</string>
     <string name="marker_lifespan">Marker lifespan (in seconds)</string>
     <string name="set">SET</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tweet_details">Tweet Details</string>
+    <string name="tweet">tweet</string>
 </resources>

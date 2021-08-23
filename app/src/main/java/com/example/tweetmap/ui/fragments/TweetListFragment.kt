@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.tweetmap.data.Resource
 import com.example.tweetmap.databinding.FragmentTweetListBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -163,8 +164,14 @@ class TweetListFragment : Fragment() {
                     LocationManager.GPS_PROVIDER, 90 * 1000,
                     10.0.toFloat(), locationListener
                 )
+                googleMap.setOnInfoWindowClickListener {
+                    val direction = TweetListFragmentDirections.actionTweetListFragmentToTweetDetailFragment(it.snippet.toString())
+                    findNavController().navigate(direction)
+                }
             }
         }
+
+
     }
 
     private fun moveMapToCurrentLocation(location: Location) {

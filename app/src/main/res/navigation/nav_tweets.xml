@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_tweets"
     app:startDestination="@id/tweetListFragment">
 
     <fragment
         android:id="@+id/tweetListFragment"
         android:name="com.example.tweetmap.ui.fragments.TweetListFragment"
-        android:label="TweetListFragment" />
+        android:label="TweetListFragment" >
+        <action
+            android:id="@+id/action_tweetListFragment_to_tweetDetailFragment"
+            app:destination="@id/tweetDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tweetDetailFragment"
+        android:name="com.example.tweetmap.ui.fragments.TweetDetailFragment"
+        android:label="fragment_tweet_detail"
+        tools:layout="@layout/fragment_tweet_detail" >
+        <argument
+            android:name="tweet"
+            app:argType="string" />
+    </fragment>
 </navigation>
