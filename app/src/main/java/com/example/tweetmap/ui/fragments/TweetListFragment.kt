@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -138,16 +137,6 @@ class TweetListFragment : Fragment() {
                 }
             }
         })
-
-        tweetListViewModel.ruleResponseLiveData.observe(viewLifecycleOwner, {
-            when (it) {
-                is Resource.Loading -> Log.v("Loading", "true") /*showLoadingView()*/
-                is Resource.Success -> {
-                }
-                is Resource.DataError -> {
-                }
-            }
-        })
     }
 
     private fun setUpGoogleMap() {
@@ -184,6 +173,7 @@ class TweetListFragment : Fragment() {
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
+    // to remove markers after customizable lifespan
     private fun startRepeatingJob(): Job {
         return CoroutineScope(Dispatchers.Default).launch {
             while (isActive) {
