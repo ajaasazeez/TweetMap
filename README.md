@@ -8,6 +8,7 @@
 	<li>Coroutines</li>
   <li>Flow</li>
 	<li>Retrofit2</li>
+	<li>Unit Testing</li>
   <li>Navigation Components</li>
 	<li>ViewModels</li>
 	<li>Repository pattern</li>
