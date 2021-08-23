@@ -39,11 +39,9 @@ class AppModule {
         return Network(context)
     }
 
-
-
     @Provides
     @Singleton
-    fun provideLogger(): HttpLoggingInterceptor{
+    fun provideLogger(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor()
         if (BuildConfig.DEBUG) {
             loggingInterceptor.apply { level = HttpLoggingInterceptor.Level.BODY }
@@ -53,7 +51,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(logger:HttpLoggingInterceptor):OkHttpClient{
+    fun provideHttpClient(logger: HttpLoggingInterceptor): OkHttpClient {
         val okHttpBuilder: OkHttpClient.Builder = OkHttpClient.Builder()
         okHttpBuilder.addInterceptor(logger)
         okHttpBuilder.connectTimeout(100, TimeUnit.SECONDS)
@@ -63,10 +61,9 @@ class AppModule {
     }
 
 
-
     @Provides
     @Singleton
-    fun providesTwitterApi(client:OkHttpClient):TweetService{
+    fun providesTwitterApi(client: OkHttpClient): TweetService {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
