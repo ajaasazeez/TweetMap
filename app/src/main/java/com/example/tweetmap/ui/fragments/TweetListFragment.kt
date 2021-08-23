@@ -145,11 +145,6 @@ class TweetListFragment : Fragment() {
                 is Resource.Success -> {
                 }
                 is Resource.DataError -> {
-                    Toast.makeText(
-                        requireContext(),
-                        "Twitter restricted account. Only hi, hey or day is allowed",
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
             }
         })

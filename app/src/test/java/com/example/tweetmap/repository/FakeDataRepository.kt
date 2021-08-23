@@ -14,9 +14,6 @@ class FakeDataRepository : DataRepositorySource {
         shouldReturnNetworkError = value
     }
 
-    override suspend fun getTweets(): Flow<Resource<TweetResponseModel>> {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun getToken(): Flow<Resource<Token>> {
         return flow {

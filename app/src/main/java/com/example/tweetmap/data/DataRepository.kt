@@ -26,11 +26,6 @@ class DataRepository @Inject constructor(
     private val remoteRepository: RemoteData,
     private val ioDispatcher: CoroutineContext
 ) : DataRepositorySource {
-    override suspend fun getTweets(): Flow<Resource<TweetResponseModel>> {
-        return flow {
-            emit(remoteRepository.getTweets())
-        }.flowOn(ioDispatcher)
-    }
 
     override suspend fun getToken(): Flow<Resource<Token>> {
         return flow {

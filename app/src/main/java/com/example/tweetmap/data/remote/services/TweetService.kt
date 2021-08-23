@@ -6,8 +6,6 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface TweetService {
-    @GET("2/tweets/search/stream")
-    suspend fun getTweets(): Response<List<TweetResponseModel>>
 
     @FormUrlEncoded
     @POST("oauth2/token")

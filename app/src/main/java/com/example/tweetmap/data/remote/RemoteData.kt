@@ -19,16 +19,6 @@ constructor(
     private val api: TweetService,
     private val networkConnectivity: NetworkConnectivity
 ) : RemoteDataSource {
-    override suspend fun getTweets(): Resource<TweetResponseModel> {
-        return when (val response = processCall(api::getTweets)) {
-            is List<*> -> {
-                Resource.Success(data = response as TweetResponseModel)
-            }
-            else -> {
-                Resource.DataError(errorCode = response as Int)
-            }
-        }
-    }
 
     override suspend fun getToken(): Resource<Token> {
         return when (val response = processCall { api.getToken(CLIENT_CREDENTIALS) }) {
