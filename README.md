@@ -12,4 +12,5 @@
   <li>Navigation Components</li>
 	<li>ViewModels</li>
 	<li>Repository pattern</li>
+	<li>CMake for securing API keys</li>
 
