@@ -42,7 +42,8 @@ class DataRepository @Inject constructor(
     override suspend fun streamTweets(): Flow<Resource<TweetResponseModel>> {
         return flow {
             val client: OkHttpClient = OkHttpClient().newBuilder().addInterceptor(
-                BasicAuthInterceptor(API_KEY, API_SECRET_KEY)
+//                BasicAuthInterceptor(API_KEY, API_SECRET_KEY)
+                BasicAuthInterceptor(getAPIKey(), getAPISecretKey())
             ).build()
 
             val request: Request = Request.Builder()
@@ -65,5 +66,12 @@ class DataRepository @Inject constructor(
             }
         }.flowOn(ioDispatcher)
 
+    }
+
+    external fun getAPIKey(): String
+    external fun getAPISecretKey(): String
+
+    init {
+        System.loadLibrary("api-keys")
     }
 }
